@@ -1,4 +1,4 @@
-#include "gps_lib.hpp"
+#include "gps_lib.h"
 
 // ******************************** CONSTRUCTORS-DESTRUCTORS *******************************
 GPSInterface::GPSInterface()

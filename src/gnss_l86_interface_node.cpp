@@ -1,6 +1,6 @@
 #include "gnss_l86_interface/GnssData.h"
 #include "ros/ros.h"
-#include "gps_lib.hpp"
+#include "gps_lib.h"
 
 int main(int argc, char **argv) 
 {
