@@ -4,10 +4,26 @@
 
 int main(int argc, char **argv) 
 {
-    GPSInterface gps;
-
-    if (!gps.open_connection("/dev/serial0", 9600))
+    if (argc < 2)
+    {
+        std::cout << "Serial Port not specified" << std::endl;
         return 1;
+    }
+
+    char* serial_port = argv[1];
+
+    std::cout << "Creating GPS Interface...\r";
+    GPSInterface gps;
+    std::cout << "GPS Interface created!     " << std::endl;
+
+    std::cout << "Opening serial connection on port " << serial_port << "...\r";
+    if (!gps.open_connection(serial_port, 9600))
+    {
+        std::cout << "Cannot open connection!                   " << std::endl;
+        return 1;
+    }
+
+    std::cout << "Connection open on port " << serial_port << "              " << std::endl;
 
     ros::init(argc, argv, "gnss_l86_interface_node");
     ros::NodeHandle n;
