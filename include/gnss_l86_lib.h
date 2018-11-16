@@ -9,7 +9,7 @@
 
 struct position {
     std::string message;        // The received message
-    std::string timestamp;      // UTC time hhmmss.milliseconds
+    float timestamp;            // UTC time hhmmss.milliseconds
     float latitude;             // Always referred to North
     float longitude;            // Always referred to East
     int fix;                    // 0 -> no fix, 1 -> fix, 2 -> dif fix
@@ -18,7 +18,7 @@ struct position {
     float altitude;             // Over sea level
 };
 
-class GPSInterface
+class GnssInterface
 {
     private:
         const std::string POSITION_START_ = "$GPGGA";
@@ -32,8 +32,8 @@ class GPSInterface
         bool populate_position_(std::string position_line);
         std::vector<std::string> read_raw_lines_();
     public:
-        GPSInterface();
-        ~GPSInterface();
+        GnssInterface();
+        ~GnssInterface();
         bool close_connection();
         position get_position();
         int get_port();

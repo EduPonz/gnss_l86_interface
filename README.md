@@ -4,7 +4,7 @@ ROS package to get GNSS information from Quectel GNSS L86 modules using UART com
 
 Features
 --------
-**gnss_l86_interface** uses **NMEA 0183** `$GPGGA` messages from the module to publish real time GNSS information to the `gnss_data` topic. The message structure is:
+**gnss_l86_interface** uses [**gnss_l86_lib**](https://github.com/EduPonz/gnss_l86_lib) to obtain messages from the module and publish real time GNSS information to the `gnss_data` topic. The message structure is:
 
 ```
 float64 latitude
@@ -21,7 +21,7 @@ Getting Started
 **gnss_l86_interface** has been developed and tested in November 2018 for ROS Kinetic using a Raspberry Pi 3 model B with Ubuntu 16.04 as Operating System. Other platforms, operating systems or distributions have not been tested and may requiere source code modification.
 
 ### Prerequisites
-**gnss_l86_interface** relies on [wiringPi](http://wiringpi.com/) for establishing a serial connection with the GNSS module. The distributor offers different installation procedures. The one used for the development of this package was:
+[**gnss_l86_lib**](https://github.com/EduPonz/gnss_l86_lib) relies on [wiringPi](http://wiringpi.com/) for establishing a serial connection with the GNSS module. The distributor offers different installation procedures. The one used for the development of this package was:
 
 ```
 $ git clone git://git.drogon.net/wiringPi

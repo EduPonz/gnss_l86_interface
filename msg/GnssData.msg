@@ -4,4 +4,4 @@ int64 fix
 int64 number_of_satelites
 float64 horizontal_precision
 float64 altitude
-string timestamp
+float64 timestamp

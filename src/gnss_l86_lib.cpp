@@ -1,17 +1,23 @@
-#include "gps_lib.h"
+#include "gnss_l86_lib.h"
 
 // ******************************** CONSTRUCTORS-DESTRUCTORS *******************************
-GPSInterface::GPSInterface()
+GnssInterface::GnssInterface()
 {
     read_line_ = "";
     port_ = 0;
+    position_.timestamp = 0;
+    position_.latitude = 0;
+    position_.longitude = 0;
     position_.fix = 0;
+    position_.number_of_satelites = 0;
+    position_.horizontal_precision = 0;
+    position_.altitude = 0;
 }
 
-GPSInterface::~GPSInterface() { }
+GnssInterface::~GnssInterface() { }
 
 // **************************************** PRIVATE ****************************************
-std::vector<std::string> GPSInterface::break_string_(std::string str, char separator)
+std::vector<std::string> GnssInterface::break_string_(std::string str, char separator)
 {
     std::string result = "";
     std::stringstream ss(str);
@@ -28,7 +34,7 @@ std::vector<std::string> GPSInterface::break_string_(std::string str, char separ
     return content;
 }
 
-float GPSInterface::parse_to_degrees_(std::string str)
+float GnssInterface::parse_to_degrees_(std::string str)
 {
     std::vector<std::string> content = break_string_(str, '.');
 
@@ -46,7 +52,7 @@ float GPSInterface::parse_to_degrees_(std::string str)
     return degrees;
 }
 
-bool GPSInterface::parse_raw_line_(std::string line)
+bool GnssInterface::parse_raw_line_(std::string line)
 {
     if (strncmp(line.c_str(), POSITION_START_.c_str(), POSITION_START_.size()) == 0)
         return populate_position_(line);
@@ -54,20 +60,23 @@ bool GPSInterface::parse_raw_line_(std::string line)
         return false;
 }
 
-bool GPSInterface::populate_position_(std::string position_line)
+bool GnssInterface::populate_position_(std::string position_line)
 {
     std::vector<std::string> content = break_string_(position_line, ',');
 
     if (content.size() >= 10)
     {
+        std::string::size_type idx;
+
         position_.message = position_line;
-        position_.timestamp = content[1];
+        position_.timestamp = std::stof(content[1], &idx);
+        idx = 0;
+
         position_.latitude = parse_to_degrees_(content[2]);
         position_.longitude = parse_to_degrees_(content[4]);
         if (content[3] != "N") position_.latitude = -position_.latitude;
         if (content[5] != "E") position_.longitude = -position_.longitude;
 
-        std::string::size_type idx;
         position_.fix = std::stoi(content[6], &idx);
         idx = 0;
         position_.number_of_satelites = std::stoi(content[7], &idx);
@@ -85,7 +94,7 @@ bool GPSInterface::populate_position_(std::string position_line)
     }
 }
 
-std::vector<std::string> GPSInterface::read_raw_lines_()
+std::vector<std::string> GnssInterface::read_raw_lines_()
 {
     char received;
     std::vector<std::string> lines;
@@ -105,23 +114,23 @@ std::vector<std::string> GPSInterface::read_raw_lines_()
 }
 
 // **************************************** PUBLIC *****************************************
-bool GPSInterface::close_connection()
+bool GnssInterface::close_connection()
 {
     serialClose(port_);
     return true;
 }
 
-int GPSInterface::get_port()
+int GnssInterface::get_port()
 {
     return port_;
 }
 
-position GPSInterface::get_position()
+position GnssInterface::get_position()
 {
     return position_;
 }
 
-bool GPSInterface::open_connection(const char* serial_port, long baud_rate)
+bool GnssInterface::open_connection(const char* serial_port, long baud_rate)
 {
     port_ = serialOpen(serial_port, baud_rate);
 
@@ -133,7 +142,7 @@ bool GPSInterface::open_connection(const char* serial_port, long baud_rate)
     else return false;
 }
 
-int GPSInterface::read_lines()
+int GnssInterface::read_lines()
 {
     std::vector<std::string> raw_lines = read_raw_lines_();
     int num_lines = 0;

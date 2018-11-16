@@ -103,7 +103,7 @@ generate_messages(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
  INCLUDE_DIRS include
- LIBRARIES gps_lib
+ LIBRARIES gnss_l86_lib
  CATKIN_DEPENDS roscpp message_runtime
 #  DEPENDS system_lib
 )
@@ -125,7 +125,7 @@ include_directories(
 
 ## Declare a C++ library
 add_library(
-  ${PROJECT_NAME} src/gps_lib.cpp
+  ${PROJECT_NAME} src/gnss_l86_lib.cpp
 )
 
 ## Add cmake target dependencies of the library
