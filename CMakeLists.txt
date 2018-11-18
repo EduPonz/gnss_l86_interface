@@ -125,7 +125,7 @@ include_directories(
 
 ## Declare a C++ library
 add_library(
-  ${PROJECT_NAME} src/gnss_l86_lib.cpp
+  gnss_l86_lib src/gnss_l86_lib.cpp
 )
 
 ## Add cmake target dependencies of the library
@@ -152,7 +152,7 @@ add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catk
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_node
-  ${PROJECT_NAME}
+  gnss_l86_lib
   wiringPi
   pthread
   m
@@ -183,11 +183,11 @@ target_link_libraries(${PROJECT_NAME}_node
 # )
 
 ## Mark cpp header files for installation
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
-#   PATTERN ".svn" EXCLUDE
-# )
+install(DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  # FILES_MATCHING PATTERN "*.h"
+  # PATTERN ".svn" EXCLUDE
+)
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES
@@ -201,7 +201,7 @@ target_link_libraries(${PROJECT_NAME}_node
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_gps_interface.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_gnss_l86_interface.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

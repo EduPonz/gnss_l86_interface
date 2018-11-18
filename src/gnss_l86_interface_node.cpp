@@ -2,7 +2,7 @@
 #include <signal.h>
 #include "gnss_l86_interface/GnssData.h"
 #include "ros/ros.h"
-#include "gnss_l86_lib.h"
+#include "gnss_l86_interface/gnss_l86_lib.h"
 
 
 int main(int argc, char **argv)
