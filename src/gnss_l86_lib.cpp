@@ -1,4 +1,6 @@
 #include <chrono>
+#include <sstream>
+#include <string.h>
 #include "gnss_l86_interface/gnss_l86_lib.h"
 
 // ******************************** CONSTRUCTORS-DESTRUCTORS *******************************
@@ -35,6 +37,11 @@ std::vector<std::string> GnssInterface::break_string_(std::string str, char sepa
     return content;
 }
 
+unsigned long long GnssInterface::get_unix_millis_()
+{
+    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+}
+
 float GnssInterface::parse_to_degrees_(std::string str)
 {
     std::vector<std::string> content = break_string_(str, '.');
@@ -68,7 +75,7 @@ bool GnssInterface::populate_position_(std::string position_line)
     if (content.size() >= 10)
     {
         position_.message = position_line;
-        position_.timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+        position_.timestamp = get_unix_millis_();
 
         position_.latitude = parse_to_degrees_(content[2]);
         position_.longitude = parse_to_degrees_(content[4]);
