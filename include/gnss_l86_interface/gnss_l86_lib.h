@@ -1,7 +1,4 @@
-#include <sstream>
-// #include <stdio.h>
 #include <string>
-#include <string.h>
 #include <vector>
 #include <wiringPi.h>
 #include <wiringSerial.h>
