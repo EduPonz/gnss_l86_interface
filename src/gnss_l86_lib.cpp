@@ -1,3 +1,4 @@
+#include <chrono>
 #include "gnss_l86_interface/gnss_l86_lib.h"
 
 // ******************************** CONSTRUCTORS-DESTRUCTORS *******************************
@@ -66,17 +67,15 @@ bool GnssInterface::populate_position_(std::string position_line)
 
     if (content.size() >= 10)
     {
-        std::string::size_type idx;
-
         position_.message = position_line;
-        position_.timestamp = std::stof(content[1], &idx);
-        idx = 0;
+        position_.timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
         position_.latitude = parse_to_degrees_(content[2]);
         position_.longitude = parse_to_degrees_(content[4]);
         if (content[3] != "N") position_.latitude = -position_.latitude;
         if (content[5] != "E") position_.longitude = -position_.longitude;
 
+        std::string::size_type idx;
         position_.fix = std::stoi(content[6], &idx);
         idx = 0;
         position_.number_of_satelites = std::stoi(content[7], &idx);

@@ -35,7 +35,7 @@ int main(int argc, char **argv)
 
     int num_lines = 0;
     gnss_l86_interface::GnssData gnss_data;
-    float last_timestamp = 1;
+    unsigned long last_timestamp;
 
     ROS_INFO("Waiting for a fix...");
     bool fix_acquired = false;

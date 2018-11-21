@@ -9,7 +9,7 @@
 
 struct position {
     std::string message;        // The received message
-    float timestamp;            // UTC time hhmmss.milliseconds
+    unsigned long timestamp;    // Epoch time in milliseconds
     float latitude;             // Always referred to North
     float longitude;            // Always referred to East
     int fix;                    // 0 -> no fix, 1 -> fix, 2 -> dif fix
