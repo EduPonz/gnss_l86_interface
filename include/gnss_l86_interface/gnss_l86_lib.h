@@ -7,8 +7,8 @@ struct position
 {
     std::string message;            // The received message
     unsigned long long timestamp;   // Unix time in milliseconds
-    float latitude;                 // Always referred to North
-    float longitude;                // Always referred to East
+    float latitude;                // Always referred to North
+    float longitude;               // Always referred to East
     int fix;                        // 0 -> no fix, 1 -> fix, 2 -> dif fix
     int number_of_satelites;        // Satelites on view
     float horizontal_precision;     // In meters;

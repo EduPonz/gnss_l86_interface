@@ -50,12 +50,12 @@ float GnssInterface::parse_to_degrees_(std::string str)
     minutes += "." + content[1];
 
     std::string::size_type idx;
-    float minutes_float = std::stof(minutes, &idx);
+    float minutes_float = std::stod(minutes, &idx);
     minutes_float = minutes_float / 60;
 
     content[0].erase(content[0].end() - 2, content[0].end());
     idx = 0;
-    float degrees = std::stof(content[0], &idx) + minutes_float;
+    float degrees = std::stod(content[0], &idx) + minutes_float;
 
     return degrees;
 }

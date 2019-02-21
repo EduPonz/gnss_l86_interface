@@ -139,6 +139,7 @@ add_library(
 add_executable(${PROJECT_NAME}_node src/${PROJECT_NAME}_node.cpp)
 add_executable(gnss_l86_test_ouput_frequency src/gnss_l86_test_ouput_frequency.cpp)
 add_executable(gnss_l86_test_read_speed src/gnss_l86_test_read_speed.cpp)
+add_executable(gnss_l86_test_node src/gnss_l86_test_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -151,6 +152,7 @@ add_executable(gnss_l86_test_read_speed src/gnss_l86_test_read_speed.cpp)
 add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(gnss_l86_test_ouput_frequency ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(gnss_l86_test_read_speed ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(gnss_l86_test_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_node
@@ -174,6 +176,16 @@ target_link_libraries(gnss_l86_test_ouput_frequency
 )
 
 target_link_libraries(gnss_l86_test_read_speed
+  gnss_l86_lib
+  wiringPi
+  pthread
+  m
+  rt
+  crypt
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(gnss_l86_test_node
   gnss_l86_lib
   wiringPi
   pthread
