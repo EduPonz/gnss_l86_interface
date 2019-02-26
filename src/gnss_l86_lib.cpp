@@ -1,6 +1,8 @@
 #include <chrono>
+#include <iostream>
 #include <sstream>
 #include <string.h>
+#include <thread>
 #include "gnss_l86_interface/gnss_l86_lib.h"
 
 // ******************************** CONSTRUCTORS-DESTRUCTORS *******************************
@@ -100,23 +102,9 @@ bool GnssInterface::populate_position_(std::string position_line)
     }
 }
 
-std::vector<std::string> GnssInterface::read_raw_lines_()
+void GnssInterface::send_command_(std::string command)
 {
-    char received;
-    std::vector<std::string> lines;
-    while (serialDataAvail(port_))
-    {
-        received = serialGetchar(port_);
-        if (received != '\n')
-            read_line_ += received;
-        else
-        {
-            lines.push_back(read_line_);
-            read_line_ = "";
-        }
-    }
-
-    return lines;
+    for (int i = 0; i < command.size(); ++i) serialPutchar(port_, command[i]);
 }
 
 // **************************************** PUBLIC *****************************************
@@ -136,13 +124,38 @@ position GnssInterface::get_position()
     return position_;
 }
 
+long GnssInterface::open_connection(const char* serial_port)
+{
+    for (int i = 0; i < baudrates_.size(); ++i)
+    {
+        if (open_connection(serial_port, baudrates_[i]))
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            serialFlush(port_);
+            std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+            std::vector<std::string> lines = read_raw_lines();
+
+            if (lines.size() > 2)
+            {
+                std::string line = lines[2];
+                std::string start = "$";
+                if (strncmp(line.c_str(), start.c_str(), start.size()) == 0)
+                    return baudrates_[i];
+            }
+            close_connection();
+        }
+    }
+
+    return 0;
+}
+
 bool GnssInterface::open_connection(const char* serial_port, long baud_rate)
 {
     port_ = serialOpen(serial_port, baud_rate);
 
     if (port_ >= 0)
     {
-        read_raw_lines_();
+        read_raw_lines();
         return true;
     }
     else return false;
@@ -150,11 +163,39 @@ bool GnssInterface::open_connection(const char* serial_port, long baud_rate)
 
 int GnssInterface::read_lines()
 {
-    std::vector<std::string> raw_lines = read_raw_lines_();
+    std::vector<std::string> raw_lines = read_raw_lines();
     int num_lines = 0;
 
     for (int i = 0; i < int(raw_lines.size()); i++)
         if (parse_raw_line_(raw_lines[i])) num_lines++;
 
     return num_lines;
+}
+
+std::vector<std::string> GnssInterface::read_raw_lines()
+{
+    char received;
+    std::vector<std::string> lines;
+    while (serialDataAvail(port_))
+    {
+        received = serialGetchar(port_);
+        if (received != '\n')
+            read_line_ += received;
+        else
+        {
+            lines.push_back(read_line_);
+            read_line_ = "";
+        }
+    }
+
+    return lines;
+}
+
+bool GnssInterface::set_baud_rate(long baudrate)
+{
+    if (baudrate == 9600) send_command_(PMTK_SET_BAUD_9600_);
+    else if (baudrate == 115200) send_command_(PMTK_SET_BAUD_115200_);
+    else return false;
+    
+    return true;
 }
