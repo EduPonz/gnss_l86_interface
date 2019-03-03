@@ -61,15 +61,17 @@ int main(int argc, char **argv)
     }
 
     int number_of_reads = atoi(argv[1]);
-    // number_of_reads += 1;
-    ROS_INFO_STREAM("Reading " << number_of_reads << " GNSS datapoints");
+    if (number_of_reads != -1)
+        ROS_INFO_STREAM("Reading " << number_of_reads << " GNSS datapoints");
+    else
+        ROS_INFO_STREAM("Reading GNSS datapoints until CTRL-C");
     ROS_INFO("----------------------------------");
 
     // Initialize node and subscribe to gnss_data topic
     ros::init(argc, argv, "gnss_l86_test_node");
     ros::NodeHandle n;
     ros::Subscriber gnss_sub = n.subscribe("gnss_data", 1000, gnss_data_callback);
-    ros::Rate loop_rate(20);
+    ros::Rate loop_rate(100);
 
     // Initialize the log file gnss_l86_test_X.csv
     std::ofstream file;
@@ -98,7 +100,7 @@ int main(int argc, char **argv)
             new_gnss = false;
         }
 
-        if (i > number_of_reads) return 0;
+        if ((i > number_of_reads) && number_of_reads != -1) return 0;
         ros::spinOnce();
         loop_rate.sleep();
     }

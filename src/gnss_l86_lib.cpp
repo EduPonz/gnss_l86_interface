@@ -44,6 +44,17 @@ unsigned long long GnssInterface::get_unix_millis_()
     return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 }
 
+int GnssInterface::parse_acknolegment_response_(std::string response, int sent_command)
+{
+    if (strncmp(response.c_str(), PMTK_ACK_START_.c_str(), PMTK_ACK_START_.size()) == 0)
+    {
+        std::vector<std::string> content = break_string_(response, ',');
+        if (std::stoi(content[1]) != sent_command) return -1;
+        else return std::stoi(content[2]);
+    }
+    else return -2;
+}
+
 float GnssInterface::parse_to_degrees_(std::string str)
 {
     std::vector<std::string> content = break_string_(str, '.');
@@ -100,6 +111,21 @@ bool GnssInterface::populate_position_(std::string position_line)
         position_.fix = 0;
         return false;
     }
+}
+
+std::string GnssInterface::read_raw_line_()
+{
+    char received;
+    std::string line;
+    while (serialDataAvail(port_))
+    {
+        received = serialGetchar(port_);
+        if (received != '\n')
+            line += received;
+        else break;
+    }
+
+    return line;
 }
 
 void GnssInterface::send_command_(std::string command)
@@ -197,5 +223,16 @@ bool GnssInterface::set_baud_rate(long baudrate)
     else if (baudrate == 115200) send_command_(PMTK_SET_BAUD_115200_);
     else return false;
     
+    return true;
+}
+
+bool GnssInterface::set_update_rate(int update_rate)
+{
+    if (update_rate == 1) send_command_(PMTK_SET_NMEA_UPDATE_1HZ_);
+    else if (update_rate == 2) send_command_(PMTK_SET_NMEA_UPDATE_2HZ_);
+    else if (update_rate == 5) send_command_(PMTK_SET_NMEA_UPDATE_5HZ_);
+    else if (update_rate == 10) send_command_(PMTK_SET_NMEA_UPDATE_10HZ_);
+    else return false;
+
     return true;
 }

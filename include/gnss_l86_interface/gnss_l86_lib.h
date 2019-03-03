@@ -19,14 +19,16 @@ struct position
 class GnssInterface
 {
     private:
+        const std::string PMTK_ACK_START_ = "$PMTK001";
         // UPDATE RATE COMMANDS
+        int NMEA_UPDATE_MESSAGE_TYPE = 220;
         const std::string PMTK_SET_NMEA_UPDATE_1HZ_ = "$PMTK220,1000*1F\r\n";
         const std::string PMTK_SET_NMEA_UPDATE_2HZ_ = "$PMTK220,500*2B\r\n";
         const std::string PMTK_SET_NMEA_UPDATE_5HZ_ = "$PMTK220,200*2C\r\n";
         const std::string PMTK_SET_NMEA_UPDATE_10HZ_ = "$PMTK220,100*2F\r\n";
         // FIX CLOCK COMMANDS
-        const std::string PMTK_API_SET_FIX_CTL_1HZ_ = "$PMTK300,1000,0,0,0,0*1C\r\n";
-        const std::string PMTK_API_SET_FIX_CTL_5HZ_ = "$PMTK300,200,0,0,0,0*2F\r\n";
+        // const std::string PMTK_API_SET_FIX_CTL_1HZ_ = "$PMTK300,1000,0,0,0,0*1C\r\n";
+        // const std::string PMTK_API_SET_FIX_CTL_5HZ_ = "$PMTK300,200,0,0,0,0*2F\r\n";
         // BAUD RATE COMMANDS
         const std::string PMTK_SET_BAUD_115200_ = "$PMTK251,115200*1F\r\n";
         const std::string PMTK_SET_BAUD_9600_ = "$PMTK251,9600*17\r\n";
@@ -39,9 +41,11 @@ class GnssInterface
 
         std::vector<std::string> break_string_(std::string str, char separator);
         unsigned long long get_unix_millis_();
+        int parse_acknolegment_response_(std::string response, int sent_command);
         float parse_to_degrees_(std::string str);
         bool parse_raw_line_(std::string line);
         bool populate_position_(std::string position_line);
+        std::string read_raw_line_();
         void send_command_(std::string command);
     public:
         GnssInterface();
@@ -54,4 +58,5 @@ class GnssInterface
         int read_lines();
         std::vector<std::string> read_raw_lines();
         bool set_baud_rate(long baudrate);
+        bool set_update_rate(int update_rate);
 };
