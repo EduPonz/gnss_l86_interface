@@ -24,10 +24,7 @@ int main(int argc, char **argv)
 
     char* serial_port = argv[1];
     long baudrate = atol(argv[2]);
-
-    ROS_INFO("Creating GPS Interface...");
     GnssInterface gnss;
-    ROS_INFO("GPS Interface created!");
 
     ROS_INFO_STREAM("Opening serial connection on port " << serial_port << "...");
     long connection_baudrate = gnss.open_connection(serial_port);
@@ -69,6 +66,13 @@ int main(int argc, char **argv)
 
     ROS_INFO_STREAM("Update rate set to " << update_rate);
 
+    if (!gnss.set_fr_mode(gnss.FITNESS_MODE))
+    {
+        ROS_ERROR("Cannot set fitness mode");
+        return 1;
+    }
+    ROS_INFO("FR mode set to FITNESS_MODE");
+
     ros::init(argc, argv, "gnss_l86_interface_node");
     ros::NodeHandle n;
     ros::Publisher publisher = n.advertise<gnss_l86_interface::GnssData>("gnss_data", 1000);
@@ -107,6 +111,8 @@ int main(int argc, char **argv)
             gnss_data.horizontal_precision = last_position.horizontal_precision;
             gnss_data.altitude = last_position.altitude;
             gnss_data.timestamp = last_position.timestamp;
+            gnss_data.speed = last_position.speed;
+            gnss_data.true_course = last_position.true_course;
             publisher.publish(gnss_data);
         }
 
